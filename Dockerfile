@@ -10,12 +10,10 @@
  ADD /Tests/ ./Tests/
  COPY Package.swift .
  RUN cd /build-lambda && swift build -c release -Xswiftc -static-stdlib
- RUN mkdir -p .build/lambda/SwiftDockerLambda/
- COPY /.build/release/SwiftDockerLambda /.build/lambda/SwiftDockerLambda/
- RUN cd /.build/lambda/SwiftDockerLambda/ && ln -s SwiftDockerLambda bootstrap
- WORKDIR /var/runtime/
- COPY /.build/lambda/bootstrap /bootstrap
- RUN chmod 755 bootstrap
+ RUN mkdir -p /var/task/
+ RUN cp .build/release/SwiftDockerLambda /var/task/SwiftDockerLambda
  WORKDIR /var/task
- COPY /build-lambda/.build/x86_64-unknown-linux-gnu/release/SwiftDockerLambda /SwiftDockerLambda
- CMD ["./SwiftDockerLambda"]
+ RUN ln -s SwiftDockerLambda bootstrap
+ RUN chmod 755 ./bootstrap
+ RUN chmod 755 ./SwiftDockerLambda
+ CMD ["/var/task/SwiftDockerLambda"]
